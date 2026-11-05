@@ -61,6 +61,7 @@ jobs:
               continue-on-error: true
               env:
                 GITHUB_TOKEN: secrets.GITHUB_TOKEN
+                GITLEAKS_LICENSE: "dummy-license"
                 GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
                 GITLEAKS_ENABLE_SUMMARY: true
 
@@ -104,7 +105,7 @@ jobs:
 
               # CodeQL is GitHub's native code scanning solution that uses a powerful query language to find security and quality issues. It integrates directly with the GitHub Security tab and can be customized with your own queries.
             - name: Initialize CodeQL
-              uses: github/codeql-action/init@v3
+              uses: github/codeql-action/init@v4
               with:
                 languages: ${{ matrix.language }}
                 # TODO#8: enable extended security + quality query suites
@@ -124,7 +125,7 @@ jobs:
             # Action: github/codeql-action/analyze@v3
             # Set category so matrix runs don't collide in Security tab.
             - name: Perform CodeQL Analysis
-              uses: github/codeql-action/analyze@v3
+              uses: github/codeql-action/analyze@v4
               with:
                 category: "/language:${{ matrix.language }}"
 
@@ -138,9 +139,16 @@ jobs:
               uses: actions/checkout@v6
 
             # TODO#10: set up Node 20 using actions/setup-node@v4
+            - name: set up Node.js 24
+              uses: actions/setup-node@v
+              with:
+                node-version: '24'
+                cache: 'npm'
 
             # TODO#11: install npm deps so Dependency-Check can resolve full tree
             #          Hint: `npm install` or `npm ci`
+            - name: install npm deps
+              run: npm ci
 
               # OWASP Dependency-Check is a popular open-source tool that scans your dependencies for known vulnerabilities. It can output results in SARIF format for GitHub Security tab integration, as well as HTML for human-readable reports.
             - name: Depcheck
@@ -166,7 +174,7 @@ jobs:
             - name: Upload Depcheck SARIF to Security tab
               if: always() 
               #the above line meant to upload SARIF even if the Depcheck step fails (e.g. due to high CVSS findings), so that we can see results in Security tab and fix issues.
-              uses: github/codeql-action/upload-sarif@v3
+              uses: github/codeql-action/upload-sarif@v4
               continue-on-error: true
               with:
                   sarif_file: reports/dependency-check-report.sarif
@@ -177,7 +185,7 @@ jobs:
             # name: depcheck-report, path: reports/
             - name: Upload Depcheck HTML report as artifact
               if: always() 
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                 name: depcheck-report
                 path: reports/
@@ -189,7 +197,7 @@ jobs:
         if: ${{ !cancelled() }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             # TODO#16: build the Docker image tagged `my-app:latest`
             #          Hint: `docker build -t ...`
@@ -210,7 +218,7 @@ jobs:
             # TODO#20: upload Trivy SARIF to Security tab
             # Action: github/codeql-action/upload-sarif@v3, category: trivy
             - name: Upload Trivy SARIF to Security tab
-              uses: github/codeql-action/upload-sarif@v3
+              uses: github/codeql-action/upload-sarif@v4
               continue-on-error: true
               with:
                   sarif_file: trivy-results.sarif
@@ -218,7 +226,7 @@ jobs:
             # TODO#21: upload trivy-results.sarif as workflow artifact
             - name: Upload Trivy HTML report as artifact
               if: always() 
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                 name: trivy-results.sarif
                 path: reports/
