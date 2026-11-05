@@ -212,7 +212,7 @@ jobs:
                 image-ref: 'my-app:latest'
                 # TODO#17: output format for Security tab integration
                 format: 'sarif'
-                output: 'trivy-results.sarif'
+                output: 'reports/trivy-results.sarif'
                 # TODO#18: which severities should be reported? (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
                 severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
                 # TODO#19: should we include CVEs with no available fix? set flag accordingly
@@ -232,7 +232,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                 name: trivy-report
-                path: trivy-results.sarif
+                path: reports/trivy-results.sarif
 
 
     # GATE#4: IaC scanning (Since there is no infrastructure cod here and it is out of scope for this class so we could skip it HELL YEAH!)
