@@ -160,10 +160,11 @@ jobs:
                 path: '.' # scan current directory (which should be the repo root after checkout)
                 # TODO#12: which format integrates with GitHub Security tab?
                 format: 'HTML'
-                out: 'reports/dependency-check-report.sarif'
+                out: 'reports'
                 # TODO#13: set fail threshold — block on CVSS >= ?
                 # Hint: CVSS 7.0+ = HIGH
-                args: >
+                args: >-
+                    --format SARIF
                     --failOnCVSS 7.0
                     --enableRetired
 
@@ -211,7 +212,7 @@ jobs:
                 image-ref: 'my-app:latest'
                 # TODO#17: output format for Security tab integration
                 format: 'sarif'
-                output: 'reports/trivy-results.sarif'
+                output: 'trivy-results.sarif'
                 # TODO#18: which severities should be reported? (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
                 severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
                 # TODO#19: should we include CVEs with no available fix? set flag accordingly
@@ -223,7 +224,7 @@ jobs:
               uses: github/codeql-action/upload-sarif@v4
               continue-on-error: true
               with:
-                  sarif_file: trivy-results.sarif
+                  sarif_file: reports/trivy-results.sarif
                   category: trivy
             # TODO#21: upload trivy-results.sarif as workflow artifact
             - name: Upload Trivy report as artifact
@@ -231,7 +232,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                 name: trivy-report
-                path: reports/trivy-results.sarif
+                path: trivy-results.sarif
 
 
     # GATE#4: IaC scanning (Since there is no infrastructure cod here and it is out of scope for this class so we could skip it HELL YEAH!)
