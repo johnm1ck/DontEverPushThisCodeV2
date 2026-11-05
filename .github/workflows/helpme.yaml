@@ -27,7 +27,7 @@ jobs:
         steps:
               # this step checks out the code so scanners can analyze it.
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                 # TODO#1: why do secret scanners need git history?
                 # Set fetch-depth to 0 so TruffleHog can diff base..HEAD across all commits.
@@ -57,7 +57,7 @@ jobs:
             #   - enable SARIF artifact upload + job summary via env vars
             # Q: difference between TruffleHog (verified live creds) vs Gitleaks (regex patterns)?
             - name: Run Gitleaks
-              uses: gitleaks/gitleaks-action@v2
+              uses: gitleaks/gitleaks-action@v3
               continue-on-error: true
               env:
                 GITHUB_TOKEN: secrets.GITHUB_TOKEN
@@ -72,7 +72,7 @@ jobs:
         # the above line means "only run this job if the workflow hasn't been cancelled by a previous job (e.g. secret-scanning)"
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                 # TODO#5: Sonar needs full history for blame/new-code detection. Set fetch-depth.
                 fetch-depth: 0
@@ -100,7 +100,7 @@ jobs:
                 language: [ 'javascript-typescript' ]
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
               # CodeQL is GitHub's native code scanning solution that uses a powerful query language to find security and quality issues. It integrates directly with the GitHub Security tab and can be customized with your own queries.
             - name: Initialize CodeQL
@@ -135,7 +135,7 @@ jobs:
         if: ${{ !cancelled() }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             # TODO#10: set up Node 20 using actions/setup-node@v4
 
