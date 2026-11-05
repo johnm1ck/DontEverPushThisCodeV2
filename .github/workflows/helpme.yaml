@@ -85,10 +85,6 @@ jobs:
             # Q: where do findings show up? (NOT GitHub Security tab — why?)
             - name: SonarQube Scan
               uses: SonarSource/sonarqube-scan-action@v7.1.0
-              with:
-                args: >
-                  -Dsonar.organization=dummy-org
-                  -Dsonar.projectKey=dummy-key
               continue-on-error: true
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
