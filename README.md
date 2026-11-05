@@ -1,6 +1,6 @@
 # DontEverPushThisCodeV2
 
-> Intentionally vulnerable Next.js app — workshop asset for **Software Engineering (2110423) 2025/2**
+> Intentionally vulnerable Next.js app — workshop asset for **Software Engineering (2110423) 2026/1**
 
 **WARNING: Never deploy this to production. Ever.**
 
